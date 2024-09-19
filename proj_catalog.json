@@ -1,0 +1,123 @@
+{
+"name": "0x14. C - Bit manipulation",
+"curriculum": "SE Foundation",
+"repo": "alx-low_level_programming",
+"project_weight": 1,
+"release_date": "",
+"first_deadline": "",
+"second_deadline": "",
+"tasks": [
+    {
+        "name": "0",
+        "repo": "alx-low_level_programming",
+        "dir": "0x14-bit_manipulation",
+        "file_name": "0-binary_to_uint.c",
+        "description": "Write a function that converts a binary number to an unsigned int.\n\nPrototype: unsigned int binary_to_uint(const char *b);\nwhere b is pointing to a string of 0 and 1 chars.\nReturn: the converted number, or 0 if\nthere is one or more chars in the string b that is not 0 or 1\nb is NULL",
+        "example": "#include <stdio.h>\n#include \"main.h\"\n\n/**\n * main - check the code\n *\n * Return: Always 0.\n */\nint main(void)\n{\n    unsigned int n;\n\n    n = binary_to_uint(\"1\");\n    printf(\"%u\\n\", n);\n    n = binary_to_uint(\"101\");\n    printf(\"%u\\n\", n);\n    n = binary_to_uint(\"1e01\");\n    printf(\"%u\\n\", n);\n    n = binary_to_uint(\"1100010\");\n    printf(\"%u\\n\", n);\n    n = binary_to_uint(\"0000000000000000000110010010\");\n    printf(\"%u\\n\", n);\n    return (0);\n}",
+        "type": "mandatory",
+        "checkers": [
+            {
+                "name": "Files are present",
+                "type": "file_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name": "0-binary_to_uint.c",
+                "weight": 1,
+                "clone_dir": "",
+                "repo_url": "",
+                "branch": "main"
+            },
+            {
+                "name": "Correct output - case: 01",
+                "type": "code_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name":"0-binary_to_uint.c",
+                "weight": 1,
+                "clone_dir": "",
+                "checker_file_name": "main_1.c",
+                "command": "gcc -Wall -pedantic -Werror -Wextra -std=gnu89 -o ",
+                "output_file": "b",
+                "expected_output": "1",
+                "correction_code": "#include <stdio.h>\n#include \"main.h\"\n\n/**\n * main - check the code .\n *\n * Return: Always 0.\n */\nint main(void)\n{\n\tunsigned int n;\n\n\tn = binary_to_uint(\"01\");\n\tprintf(\"%u\\n\", n);\n\treturn (0);\n}"
+            },
+            {
+                "name": "Correct output - case: “0000000000000000000000000000000000000000000000001”",
+                "type": "code_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name":"0-binary_to_uint.c",
+                "weight": 1,
+                "clone_dir": "",
+                "checker_file_name": "main_2.c",
+                "command": "gcc -Wall -pedantic -Werror -Wextra -std=gnu89 -o ",
+                "output_file": "c",
+                "expected_output": "1",
+                "correction_code": "#include <stdio.h>\n#include \"main.h\"\n\n/**\n * main - check the code .\n *\n * Return: Always 0.\n */\nint main(void)\n{\n\tunsigned int n;\n\n\tn = binary_to_uint(\"0000000000000000000000000000000000000000000000001\");\n\tprintf(\"%u\\n\", n);\n\treturn (0);\n}"
+
+            },
+            {
+                "name": "Correct output - case: “11111111111111111111111111111111”",
+                "type": "code_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name":"0-binary_to_uint.c",
+                "weight": 1,
+                "clone_dir": "",
+                "checker_file_name": "main_3.c",
+                "command": "gcc -Wall -pedantic -Werror -Wextra -std=gnu89 -o ",
+                "output_file": "d",
+                "expected_output": "4294967295",
+                "correction_code": "#include <stdio.h>\n#include \"main.h\"\n\n/**\n * main - check the code .\n *\n * Return: Always 0.\n */\nint main(void)\n{\n\tunsigned int n;\n\n\t/* UINT_MAX */\n\tn = binary_to_uint(\"11111111111111111111111111111111\");\n\tprintf(\"%u\\n\", n);\n\treturn (0);\n}\n"
+                
+            },
+            {
+                "name": "Correct output - case: “”",
+                "type": "code_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name":"0-binary_to_uint.c",
+                "weight": 1,
+                "clone_dir": "",
+                "checker_file_name": "main_4.c",
+                "command": "gcc -Wall -pedantic -Werror -Wextra -std=gnu89 -o ",
+                "output_file": "e",
+                "expected_output": "0",
+                "correction_code": "#include <stdio.h>\n#include \"main.h\"\n\n/**\n * main - check the code .\n *\n * Return: Always 0.\n */\nint main(void)\n{\n\tunsigned int n;\n\n\tn = binary_to_uint(\"\");\n\tprintf(\"%u\\n\", n);\n\treturn (0);\n}\n"
+                
+            }
+        ]
+    },
+    {
+        "name": "Endianness",
+        "repo": "alx-low_level_programming",
+        "dir": "0x14-bit_manipulation",
+        "file_name": "100-get_endianness.c",
+        "description": "Write a function that checks the endianness.\n\nPrototype: int get_endianness(void);\n\tReturns: 0 if big endian, 1 if little endian",
+        "example": "#include <stdio.h>\n#include \"main.h\"\n\nint main(void)\n\n{\n\tint n;\n\n\tn = get_endianness();\n\tif (n != 0)\n{\n\tprintf(\"Little Endian\\n\");\n}\n\telse\n{\n\tprintf(\"Big Endian\\n\");\n}\nreturn (0);\n}",
+        "type": "advanced",
+        "checkers": [
+            {
+                "name": "Files are present",
+                "type": "file_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name": "100-get_endianness.c",
+                "weight": 1,
+                "clone_dir": "",
+                "repo_url": "",
+                "branch": "main"
+            },
+            {
+                "name": "Compile program",
+                "type": "code_checker",
+                "dir": "0x14-bit_manipulation",
+                "file_name":"100-get_endianness.c",
+                "weight": 1,
+                "clone_dir": "",
+                "checker_file_name": "main_0.c",
+                "command": "gcc -Wall -pedantic -Werror -Wextra -std=gnu89 -o ",
+                "output_file": "f",
+                "expected_output": "Little Endian",
+                "correction_code": "#include <stdio.h>\n#include \"main.h\"\n\nint main(void)\n{\n\tint n;\n\n\tn = get_endianness();\n\tif (n != 0)\n\t{\n\t\tprintf(\"Little Endian\\n\");\n\t}\n\telse\n\t{\n\t\tprintf(\"Big Endian\\n\");\n\t}\n\treturn (0);\n}\n"
+            }
+           
+        ]
+    }
+]
+
+}
