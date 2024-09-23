@@ -24,7 +24,7 @@ ByteSchool is an online platform designed to facilitate coding education. The AP
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/daveyhmariam/ByteSchool
    cd ByteSchool
 Create a virtual environment:
 
