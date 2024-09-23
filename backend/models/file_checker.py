@@ -26,8 +26,6 @@ class FileChecker(Checker):
                     setattr(self, key, value)
         models.storage.new(self)
 
-
-
     def clone_repo(self):
         """ Clone the repository into the specified directory. """
         if os.path.exists(self.clone_dir):
@@ -47,7 +45,8 @@ class FileChecker(Checker):
             print(f"Cloning repository from {self.repo_url}...")
             try:
                 print(f"clone_dir: {self.clone_dir}")
-                Repo.clone_from(self.repo_url, self.clone_dir, branch=self.branch)
+                Repo.clone_from(self.repo_url, self.clone_dir,
+                                branch=self.branch)
                 print("cloning done")
                 pass
             except Exception as e:

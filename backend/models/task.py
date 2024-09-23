@@ -26,7 +26,6 @@ class Task():
         # self._checkers_mandatory = {}
         self.checkers = []
         self.objs = []
-        
 
         if kwargs:
             for key, value in kwargs.items():
@@ -62,21 +61,20 @@ class Task():
         """Converts the task object to a dictionary"""
         new_dict = {}
         dict_copy = self.__dict__.copy()
-        
+
         # Ensure objs is populated
-        
+
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
             else:
                 new_dict[key] = value
-        
-        new_dict["__class__"] = self.__class__.__name__
-        
-        # Remove old checkers key if it exists
-        
-        return new_dict
 
+        new_dict["__class__"] = self.__class__.__name__
+
+        # Remove old checkers key if it exists
+
+        return new_dict
 
     def get_objs(self):
         self.objs = []
@@ -118,10 +116,10 @@ class Task():
 
     def create_checker(self, checker):
         if not isinstance(checker, (FileChecker, CodeChecker)):
-            raise TypeError("Expected an instance of FileChecker or CodeChecker")
+            raise TypeError(
+                "Expected an instance of FileChecker or CodeChecker")
         self.checkers.append(f"{checker.__class__.__name__}.{checker._id}")
         models.storage.save_object(self)
-
 
     """
         def create_checker_(self, name, type, dir,
@@ -134,18 +132,20 @@ class Task():
                                 checker_file_name)
             self.add_checker(checker.name, checker)
     """
-    
 
     def start_checking(self):
         if not self.objs:
             self.get_objs()
-        
+
         # Filter out None values and ensure all objects have 'type' attribute
-        valid_checkers = [checker for checker in self.objs if checker is not None and hasattr(checker, 'type')]
+        valid_checkers = [
+            checker for checker in self.objs if checker is not None and hasattr(checker, 'type')]
 
         # Separate mandatory and file checkers
-        mandatory = [checker for checker in valid_checkers if checker.type in ["file_checker", "mandatory"]]
-        others = [checker for checker in valid_checkers if checker.type not in ["file_checker", "mandatory"]]
+        mandatory = [checker for checker in valid_checkers if checker.type in [
+            "file_checker", "mandatory"]]
+        others = [checker for checker in valid_checkers if checker.type not in [
+            "file_checker", "mandatory"]]
 
         for value in mandatory:
             value.execute()
@@ -158,7 +158,6 @@ class Task():
         for value in others:
             value.execute()
             models.storage.save_object(value)
-
 
     def update_checkes_complete(self):
         if self.objs == []:
@@ -194,9 +193,11 @@ class Task():
         except ZeroDivisionError as e:
             pass
 
-if __name__== "__main__":
 
-    task = Task("0", "alx-low_level_programming", "0-binary_to_uint.c", "", "", 'mandatory')
+if __name__ == "__main__":
+
+    task = Task("0", "alx-low_level_programming",
+                "0-binary_to_uint.c", "", "", 'mandatory')
     repo_url = 'https://github.com/daveyhmariam/alx-low_level_programming.git'
     file_name = '0-binary_to_uint.c'  # Example file name
     clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + \
@@ -210,7 +211,8 @@ if __name__== "__main__":
     repo_url = 'https://github.com/daveyhmariam/alx-low_level_programming.git'
     dir = '0x14-bit_manipulation'
     file_name = '0-binary_to_uint.c'
-    clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + repo_url.split('/')[-1].split('.')[0]
+    clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + \
+        repo_url.split('/')[-1].split('.')[0]
     type = 'code_checker'
     checker_file_name = '0-main.c'
     output_file = 'a'
@@ -248,7 +250,8 @@ int main(void)
 }
 """
 
-    checker2 = CodeChecker('Code_checker', type, dir, file_name, 2, clone_dir, checker_file_name, command, output_file, expected_output, correction_code)
+    checker2 = CodeChecker('Code_checker', type, dir, file_name, 2, clone_dir,
+                           checker_file_name, command, output_file, expected_output, correction_code)
     task.create_checker(checker2)
     print(task.checkers)
     task.get_objs()

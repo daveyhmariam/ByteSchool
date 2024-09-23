@@ -9,29 +9,33 @@ import json
 
 
 class User:
-    def __init__(self, username, email, password, curriculum, user_github, **kwargs):
+    def __init__(self, username, email, curriculum, user_github, role, password='', password_hash='', **kwargs):
         self._id = kwargs.get('_id', str(ObjectId()))
 
         self.username = username
         self.email = email
 
-        self.password_hash = self._hash_password(password)
-        self.curriculum = curriculum if isinstance(curriculum, list) else [curriculum]
+        self.password_hash = password_hash if password_hash != '' else self._hash_password(
+            password)
+
+        self.curriculum = curriculum if isinstance(
+            curriculum, list) else [curriculum]
         self.user_github = user_github
+        self.role = role
         self.projects = []
         self.objs = []
         self.average = {}
 
-
         for key, value in kwargs.items():
             if key != "__class__":
                 if key == "password_hash":
-                    hash = value.encode('utf-8') if isinstance(value, str) else value
+                    hash = value.encode(
+                        'utf-8') if isinstance(value, str) else value
                     setattr(self, key, hash)
                 else:
                     setattr(self, key, value)
-        models.storage.new(self)
 
+        models.storage.new(self)
 
     def get_objs(self):
         """Return the project ID if it exists, else None"""
@@ -53,35 +57,26 @@ class User:
 
     def _hash_password(self, password):
         """Hashes the password using bcrypt"""
+
         salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode('utf-8'), salt)
+        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def check_password(self, password):
         """Checks if the provided password matches the stored hash"""
-        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash)
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
     def to_dict(self):
-        """Converts the user object to a dictionary"""
-        dict_copy = self.__dict__.copy()
         new_dict = {}
-        
-        # Ensure objs is populated
-        if not self.objs:
-            self.get_objs()
-        
+        dict_copy = self.__dict__.copy()
+
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
-            elif key != "password_hash":
+            else:
                 new_dict[key] = value
-        
-        new_dict["__class__"] = self.__class__.__name__
-        
-        # Remove old projects key if it exists
-        new_dict.pop("projects", None)
-        
-        return new_dict
 
+        new_dict["__class__"] = self.__class__.__name__
+        return new_dict
 
     def update_score(self):
         self.get_objs()
@@ -97,6 +92,7 @@ class User:
                 try:
                     print("user score", score, weight)
                     self.average[curriculum] = score / weight
+                    models.storage.save_object(self)
                 except ZeroDivisionError as e:
                     pass
         else:
@@ -107,25 +103,29 @@ class User:
 
             try:
                 self.average[curriculum] = score / weight
+                models.storage.save_object(self)
+
             except ZeroDivisionError as e:
                 pass
 
 
-
 if __name__ == "__main__":
-    name='dave'
-    email='dave@'
+    name = 'dave'
+    email = 'dave@'
     passw = "dave@!@#"
     curri = 'found'
-    arg={'username': name, 'email': email, 'password': passw, 'curriculum': curri, 'user_github': "https://github.com/daveyhmariam"}
+    arg = {'username': name, 'email': email, 'password': passw, 'curriculum': curri,
+           'user_github': "https://github.com/daveyhmariam", "role": "user"}
     user = User(**arg)
-    project = Project('0x14-bit_manipulation', "SE Foundation", "alx-low_level_programming", 1, '', '', '')
+    project = Project('0x14-bit_manipulation', "SE Foundation",
+                      "alx-low_level_programming", 1, '', '', '')
 
     from backend.models.file_checker import FileChecker
     from backend.models.code_checker import CodeChecker
     from backend.models.task import Task
 
-    task = Task("0", "alx-low_level_programming", "0-binary_to_uint.c", "", "", 'mandatory')
+    task = Task("0", "alx-low_level_programming",
+                "0-binary_to_uint.c", "", "", 'mandatory')
     repo_url = 'https://github.com/daveyhmariam/alx-low_level_programming.git'
     file_name = '0-binary_to_uint.c'  # Example file name
     clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + \
@@ -139,7 +139,8 @@ if __name__ == "__main__":
     repo_url = 'https://github.com/daveyhmariam/alx-low_level_programming.git'
     dir = '0x14-bit_manipulation'
     file_name = '0-binary_to_uint.c'
-    clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + repo_url.split('/')[-1].split('.')[0]
+    clone_dir = '/home/falcon/alx_2/ByteSchool/e6fedb62-7a84-4ef0-ab43-48aea3b04daf/' + \
+        repo_url.split('/')[-1].split('.')[0]
     type = 'code_checker'
     checker_file_name = '0-main.c'
     output_file = 'a'
@@ -177,7 +178,8 @@ int main(void)
 }
 """
 
-    checker2 = CodeChecker('Code_checker', type, dir, file_name, 2, clone_dir, checker_file_name, command, output_file, expected_output, correction_code)
+    checker2 = CodeChecker('Code_checker', type, dir, file_name, 2, clone_dir,
+                           checker_file_name, command, output_file, expected_output, correction_code)
     task.create_checker(checker2)
     project.create_task(task)
     print(project.tasks)
