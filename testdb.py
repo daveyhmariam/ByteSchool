@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from backend.models.user import User
 from pymongo import MongoClient
 
 
@@ -19,3 +20,14 @@ with open("proj_catalog.json", 'r') as f:
     import json
     d = json.load(f)
     collection.insert_one(d)
+
+collection = db["User"]
+arg = {
+    "username": "daniel",
+    "email": "danielY@exam.com",
+    "curriculum": "",
+    "user_github": "",
+    "password": "securepassword123",
+    "role": "admin"
+}
+user = User(**arg)
