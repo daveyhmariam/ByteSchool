@@ -18,7 +18,7 @@ ByteSchool is an online platform designed to facilitate coding education. The AP
 - Flask-CORS
 - Flasgger
 - bcrypt
-- MongoDB (or your preferred database)
+- MongoDB
 
 ### Installation
 
