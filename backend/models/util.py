@@ -50,6 +50,7 @@ class Util:
             project.create_task(task)
 
         user.add_project(project)
+        return project
 
 
 if __name__ == "__main__":
@@ -68,16 +69,14 @@ if __name__ == "__main__":
     util.create_project(user, "0x14. C - Bit manipulation")
     user.get_objs()
     p = user.objs[0]
-    print(p.to_dict())
-    p.get_objs()
-    # p.objs[0].update_task_score()
-    # print(p.objs[0].to_dict())
-    p.objs[0].get_objs()
-    print(p.objs[0].objs[0].to_dict())
+ 
 
-    """
-    print(user.projects)
-    print(user.objs)
+    print("users", user.objs)
+    p.get_objs()
+    print("tasks", p.objs)
+
+
+
     """
     user.update_score()
     print(user.to_dict())
@@ -85,3 +84,4 @@ if __name__ == "__main__":
     usemail = models.storage.get_email("daveyhmaariam@gmail.com")
     print("user email", usemail.to_dict())
     print("check", user.check_password("daveyhm@12345"))
+    """
