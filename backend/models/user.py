@@ -65,6 +65,27 @@ class User:
         """Checks if the provided password matches the stored hash"""
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
+    def delete_project(self, id):
+        if id:
+            project_id = f'Project.{id}'
+            
+            if project_id in self.projects:
+                self.projects.remove(project_id)
+                print(f"project {project_id}")
+
+                project = models.storage.get('Project', id)
+
+                if project:
+                    models.storage.delete("Project", id)
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            raise ValueError("Project ID must be provided")
+
+
     def to_dict(self):
         new_dict = {}
         dict_copy = self.__dict__.copy()

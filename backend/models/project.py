@@ -74,6 +74,8 @@ class Project():
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
+            if key == '_id':
+                new_dict[key] = str(value)
             else:
                 new_dict[key] = value
 
@@ -90,11 +92,13 @@ class Project():
 
     def get_objs(self):
         if self.objs == []:
-            for item in self.tasks:
-                idty = item.split(".")
-                retrieved = models.storage.get(idty[0], idty[1])
-                if retrieved is not None:
-                    self.objs.append(retrieved)
+            if self.tasks != []:
+                for item in self.tasks:
+                    idty = item.split(".")
+                    print("idty", type(self.tasks))
+                    retrieved = models.storage.get(idty[0], idty[1])
+                    if retrieved is not None:
+                        self.objs.append(retrieved)
 
     """
     def create_checker(self, task_id, name: str, type, dir,

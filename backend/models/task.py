@@ -67,6 +67,8 @@ class Task():
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
+            if key == "_id":
+                new_dict[key] = str(value)
             else:
                 new_dict[key] = value
 
