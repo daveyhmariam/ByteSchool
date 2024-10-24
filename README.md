@@ -29,25 +29,25 @@ ByteSchool is an online platform designed to facilitate coding education. The AP
 Create a virtual environment:
 
 bash
-Copy code
 python3 -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-Install the required packages:
+source venv/bin/activate
 
 bash
-Copy code
-pip install -r requirements.txt
-Set up environment variables: Create a .env file in the root directory and add the following:
+pip install -r requirenents.txt
 
 env
 Copy code
 API_HOST=0.0.0.0
 API_PORT=5000
+FLASK_APP=/backend/app/views/app.py
 Run the application:
 
 bash
-Copy code
-python -m flask run
+flask run
+
+
+
+
 API Endpoints
 User Endpoints
 POST /api/users/register - Register a new user.
