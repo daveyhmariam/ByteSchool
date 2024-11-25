@@ -35,7 +35,10 @@ class Checker():
         new_dict = dict()
         dict_copy = self.__dict__.copy()
         for key, value in dict_copy.items():
-            new_dict[key] = value
+            if key == '_id':
+                new_dict[key] = str(value)
+            else:
+                new_dict[key] = value
         new_dict["__class__"] = self.__class__.__name__
         return new_dict
 

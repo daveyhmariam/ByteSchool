@@ -3,7 +3,7 @@
 Contains the MongoDBStorage class
 """
 
-from pymongo import MongoClient, errors
+from pymongo import MongoClient, errors, ASCENDING
 from bson.objectid import ObjectId
 from backend.models.checker import Checker
 from backend.models.file_checker import FileChecker
@@ -24,6 +24,7 @@ classes = {
     'User': User,
 }
 
+
 class MongoDBStorage:
     """Interacts with MongoDB database"""
 
@@ -36,6 +37,7 @@ class MongoDBStorage:
     def all(self, cls=None):
         """Returns a dictionary of all objects of a class, or all objects"""
         result = {}
+        cls = classes[cls]
         if cls:
             collection = self.db[cls.__name__]
             documents = collection.find()
@@ -59,7 +61,7 @@ class MongoDBStorage:
         if obj:
             collection = self.db[obj.__class__.__name__]
             obj_dict = obj.to_dict()
-            
+
             # Ensure _id is an ObjectId
             if '_id' in obj_dict:
                 if isinstance(obj_dict['_id'], str):
@@ -72,11 +74,18 @@ class MongoDBStorage:
                     obj_dict['_id'] = ObjectId.from_uuid(obj_dict['_id'])
 
             try:
-                # Insert into MongoDB
+                if obj.__class__.__name__ == 'User':
+                    # collection.create_index([("email", ASCENDING)], unique=True)
+                    existing_user = collection.find_one(
+                        {"email": obj_dict.get("email")})
+                    if existing_user:
+                        print(f"Email {obj_dict.get('email')} already exists.")
+                        return
+
                 collection.insert_one(obj_dict)
-                obj._id = str(obj_dict['_id'])  # Convert ObjectId to string for the object
+                print("ID", obj._id)
+                obj._id = str(obj_dict['_id'])
             except errors.DuplicateKeyError:
-                # Update if a duplicate key error occurs
                 collection.update_one(
                     {'_id': obj_dict['_id']},
                     {'$set': obj_dict}
@@ -112,12 +121,11 @@ class MongoDBStorage:
             except Exception as e:
                 print(f"Error updating object: {e}")
 
-    def delete(self, obj=None):
+    def delete(self, cls, id):
         """Deletes an object from MongoDB collection"""
-        if obj:
-            collection = self.db[obj.__class__.__name__]
-            collection.delete_one({"_id": ObjectId(obj._id)})
-
+        if cls in classes:
+            collection = self.db[cls]
+            collection.delete_one({"_id": ObjectId(id)})
 
     def close(self):
         """Close the MongoDB connection"""
@@ -126,12 +134,14 @@ class MongoDBStorage:
     def get(self, cls, id):
         """Returns the object based on the class name and its ID"""
         if cls not in classes.keys():
-            print("classes", cls)
             print(classes.keys())
             print("retrun none get mongo")
             return None
         collection = self.db[cls]
-        doc = collection.find_one({"_id": ObjectId(id)})
+        if ObjectId.is_valid(id):
+            doc = collection.find_one({"_id": ObjectId(id)})
+        else:
+            doc = collection.find_one({"_id": id})
         if doc:
             obj = classes[cls](**doc)
             obj._id = str(doc['_id'])  # Convert ObjectId to string
@@ -166,17 +176,31 @@ class MongoDBStorage:
                 }
             }
         ]
-        augmented_result = list(self.db[obj.__class__.__name__].aggregate(pipeline))
+        augmented_result = list(
+            self.db[obj.__class__.__name__].aggregate(pipeline))
         augmented_objs = []
         for item in augmented_objs:
-            restored = classes[obj.__class__.__name__](**str[f"{obj.__class__.name__}_{field}"])
+            restored = classes[obj.__class__.__name__](
+                **str[f"{obj.__class__.name__}_{field}"])
             augmented_objs.append(restored)
 
         return augmented_objs
+
+    def get_email(self, email=None):
+
+        collection = self.db["User"]
+        if email == None:
+            return None
+        doc = collection.find_one({"email": email})
+        if doc:
+            obj = classes["User"](**doc)
+            obj._id = str(doc['_id'])
+            return obj
+        print("retrun none get mongo outer")
+        return None
 
     def get_catalog(self, catalog, name):
 
         collection = self.db[catalog]
         item = collection.find_one({"name": name})
         return item
-

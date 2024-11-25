@@ -1,0 +1,17 @@
+POST    /api/users/register         - Register a new user
+POST    /api/users/login            - Login
+GET     /api/users/me               - Get current user profile
+PUT     /api/users/me               - Update profile
+
+POST    /api/projects               - Create a new project
+GET     /api/projects               - Get all projects for user
+GET     /api/projects/{id}          - Get specific project
+PUT     /api/projects/{id}          - Update project
+DELETE  /api/projects/{id}          - Delete project
+
+POST    /api/projects/{id}/tasks    - Create task in project
+POST    /api/projects/{id}/tasks/{taskId}/check   - Check task code
+GET     /api/projects/{id}/tasks    - Get tasks for project
+GET     /api/projects/{id}/progress - Get project progress
+
+POST    /api/projects/{id}/clone    - Clone project GitHub repo

@@ -93,6 +93,8 @@ class User:
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
+            elif key == '_id':
+                new_dict[key] = str(value)
             else:
                 new_dict[key] = value
 
@@ -103,6 +105,7 @@ class User:
         self.get_objs()
         if isinstance(self.curriculum, list):
             for curriculum in self.curriculum:
+                print("entered update score")
                 score = 0
                 weight = 0
                 for proj in self.objs:

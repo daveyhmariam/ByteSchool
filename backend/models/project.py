@@ -19,7 +19,7 @@ class Project():
         self.second_deadline = second_deadline
         self._score_mandatory = 0
         self._score_advanced = 0
-        self._project_score = 0
+        self.project_score = 0
         self.tasks = []
         self.objs = []
 
@@ -47,14 +47,6 @@ class Project():
         self._score_advanced = value
         models.storage.save_object(self)
 
-    @property
-    def project_score(self):
-        return self._project_score
-
-    @project_score.setter
-    def project_score(self, value):
-        self._project_score = value
-        models.storage.save_object(self)
 
     """
     def get_task(self, key):
@@ -74,7 +66,7 @@ class Project():
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
-            if key == '_id':
+            elif key == '_id':
                 new_dict[key] = str(value)
             else:
                 new_dict[key] = value

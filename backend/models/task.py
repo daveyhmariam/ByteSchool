@@ -21,7 +21,7 @@ class Task():
         self.description = description
         self.example = example
         self.type = type
-        self._task_score = 0
+        self.task_score = 0
         self._checkes_complete = 0
         # self._checkers_mandatory = {}
         self.checkers = []
@@ -67,14 +67,13 @@ class Task():
         for key, value in dict_copy.items():
             if key == "objs":
                 pass
-            if key == "_id":
+            elif key == "_id":
                 new_dict[key] = str(value)
             else:
                 new_dict[key] = value
 
         new_dict["__class__"] = self.__class__.__name__
 
-        # Remove old checkers key if it exists
 
         return new_dict
 
@@ -139,11 +138,9 @@ class Task():
         if not self.objs:
             self.get_objs()
 
-        # Filter out None values and ensure all objects have 'type' attribute
         valid_checkers = [
             checker for checker in self.objs if checker is not None and hasattr(checker, 'type')]
 
-        # Separate mandatory and file checkers
         mandatory = [checker for checker in valid_checkers if checker.type in [
             "file_checker", "mandatory"]]
         others = [checker for checker in valid_checkers if checker.type not in [
@@ -152,14 +149,16 @@ class Task():
         for value in mandatory:
             value.execute()
             if value.status == "INCOMPLETE":
-                print('Previous check failed')
+                print(f'Checker {value} is incomplete')
                 return
+            print(f'Checker {value} executed successfully')
             models.storage.save_object(value)
 
-        print('In task start checking')
         for value in others:
             value.execute()
             models.storage.save_object(value)
+            print(f'Checker {value} executed successfully')
+
 
     def update_checkes_complete(self):
         if self.objs == []:
@@ -176,24 +175,29 @@ class Task():
         self._checkes_complete = round((completed / total_checkers) * 100, 2)
         models.storage.save_object(self)
 
-    @property
-    def task_score(self):
-        return self._task_score
+
 
     def update_task_score(self):
         total_weight = 0
         task_score = 0
         self.start_checking()
+        print("Task checkers:", self.objs)  # Debugging line
+
         for value in self.objs:
             total_weight += value.weight
             task_score += value.score
+            print(f"Checker {value} -> Weight: {value.weight}, Score: {value.score}")  # Debugging line
 
         try:
-            self._task_score = round((task_score / total_weight) * 100, 2)
-            self.update_checkes_complete()
-            models.storage.save_object(self)
+            if total_weight > 0:
+                self.task_score = round((task_score / total_weight) * 100, 2)
+                print(f"Updated task score: {self.task_score}")
+                self.update_checkes_complete()
+                models.storage.save_object(self)
+            else:
+                print("No weight available, skipping score calculation")
         except ZeroDivisionError as e:
-            pass
+            print(f"ZeroDivisionError: {e}")
 
 
 if __name__ == "__main__":

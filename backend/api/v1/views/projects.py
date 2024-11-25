@@ -9,6 +9,7 @@ from flasgger import swag_from
 
 @app_views.route('/projects', methods=['GET'], strict_slashes=False)
 @swag_from({
+    'tags': ['Projects'],
     'responses': {
         200: {
             'description': 'List of all projects for the user',
@@ -37,6 +38,7 @@ def all_project():
 
 @app_views.route('/projects/<project_id>', methods=['GET'], strict_slashes=False)
 @swag_from({
+    'tags': ['Projects'],
     'parameters': [
         {
             'name': 'project_id',
@@ -69,6 +71,7 @@ def get_project(project_id):
 
 @app_views.route('/projects/<user_id>/<project_name>', methods=['POST'], strict_slashes=False)
 @swag_from({
+    'tags': ['Projects'],
     'parameters': [
         {
             'name': 'user_id',
@@ -121,6 +124,7 @@ def create_project(user_id, project_name):
 
 @app_views.route('/projects/<user_id>/<project_id>', methods=['DELETE'], strict_slashes=False)
 @swag_from({
+    'tags': ['Projects'],
     'parameters': [
         {
             'name': 'user_id',
@@ -168,6 +172,7 @@ def delete_project(user_id, project_id):
 
 @app_views.route('/projects/<project_id>', methods=['PUT'], strict_slashes=False)
 @swag_from({
+    'tags': ['Projects'],
     'parameters': [
         {
             'name': 'project_id',
@@ -203,6 +208,7 @@ def update_project(project_id):
 
 @app_views.route('/tasks/<task_id>', methods=['PUT'], strict_slashes=False)
 @swag_from({
+    'tags': ['Tasks'],
     'parameters': [
         {
             'name': 'task_id',
@@ -227,24 +233,102 @@ def update_project(project_id):
 def update_task(task_id):
     """Update project score for a specific task."""
     task = models.storage.get("Task", task_id)
+    print(task)
     if task:
         task.update_task_score()
-        return jsonify(task.to_dict()), 200
+        return jsonify(message="task scored"), 200
     else:
         abort(404, description="Task not found")
 
 
 @app_views.route('/tasks/<project_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/tasks/<project_id>', methods=['GET'], strict_slashes=False)
+@swag_from({
+    'tags': ['Tasks'],
+    'summary': 'Get tasks for a specific project',
+    'description': 'Retrieve all tasks associated with the specified project by its project ID. If the project is found, it returns a list of tasks in dictionary format. Otherwise, a 404 error is returned if the project or tasks are not found.',
+    'parameters': [
+        {
+            'name': 'project_id',
+            'in': 'path',
+            'type': 'string',
+            'required': True,
+            'description': 'ID of the project whose tasks need to be retrieved',
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'List of tasks retrieved successfully',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                '_id': {
+                                    'type': 'string',
+                                    'description': 'Unique task identifier'
+                                },
+                                'name': {
+                                    'type': 'string',
+                                    'description': 'Name of the task'
+                                },
+                                'repo': {
+                                    'type': 'string',
+                                    'description': 'Repository associated with the task'
+                                },
+                                'dir': {
+                                    'type': 'string',
+                                    'description': 'Directory of the task'
+                                },
+                                'file_name': {
+                                    'type': 'string',
+                                    'description': 'Name of the file associated with the task'
+                                },
+                                'description': {
+                                    'type': 'string',
+                                    'description': 'Description of the task'
+                                },
+                                'example': {
+                                    'type': 'string',
+                                    'description': 'Example related to the task'
+                                },
+                                'type': {
+                                    'type': 'string',
+                                    'description': 'Type of the task (mandatory/optional)'
+                                },
+                                'task_score': {
+                                    'type': 'number',
+                                    'description': 'Task score'
+                                },
+                                '_checkes_complete': {
+                                    'type': 'number',
+                                    'description': 'Completion percentage of checks for the task'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            'description': 'Project or tasks not found'
+        }
+    }
+})
 def get_task(project_id):
-    """Update project score for a specific task."""
+    """Get tasks for a specific project."""
     if project_id:
         project = models.storage.get('Project', project_id)
     if not project:
         abort(404, description="Task not found")
     project.get_objs()
     tasks = []
-    for item in project.objs:
-        tasks.append(item.to_dict())
-        return jsonify(tasks), 200
+    tsk = project.objs.copy()
+    if tsk != []:
+        for item in tsk:
+            tasks.append(item.to_dict())
+        return tasks, 200
     else:
         abort(404, description="Task not found")
